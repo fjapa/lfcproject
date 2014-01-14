@@ -1,1 +1,9 @@
-Trabalho de Felipe Florencio e Hugo Menezes
+/*Trabalho de Felipe Florencio e Hugo Menezes*/
+
+/*Código*/
+
+%option main
+	#include <stdio.h>
+%%
+else|if|int|return|void|while puts( yytext );
+.|\n|\r
