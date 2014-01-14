@@ -5,5 +5,5 @@
 %option main
 	#include <stdio.h>
 %%
-else|if|int|return|void|while puts( yytext );
+else|if|int|return|void|while |[-+*/<>=,;(){}]|=>|<=|==|!=|[[]|[]]|[{]|[}] puts( yytext );
 .|\n|\r
