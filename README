@@ -9,27 +9,33 @@ int level;
 
 %option noyywrap
 PALAVRASCHAVE else|if|int|return|void|while|string
-OPERADORES [-+*/<>=,;(){}]|[{[]|[]}]
-ID [a-z]|[A-Z]*
+OPERADORES \+|\-|\*|\/|\<|<=|\>|>=|==|!=|\=|\;|\,|[()]|[[]]|[{}]    
+ID [a-zA-Z]+
+IDINVALIDO [0-9]+[a-zA-Z]+[0-9]*|[0-9]*[a-zA-Z]+[0-9]+
 NUM [0-9][0-9]*
-STR ["]([^\\"]|\\([^0-7xX]|0|[0-7]{3}|[xX][0-9a-fA-F]{2}))*["]
+STR ["][^"]*[^\n]["]   
+
+
+
+
 
 %x COMENT
 
 %%
-.|\n|\r
-"/*"  			BEGIN( COMENT ); level = 1;
-<COMENT>{ 
-"/*"		{level++;}
-"*/"		{if(--level == 0) BEGIN( INITIAL );}
-.|\n|\r		{ECHO;}
-}
+\r|\n|\t
+"/*"  			BEGIN( COMENT ); level = 1; printf( "Início do comentário:\n");
 
-{PALAVRASCHAVE}+ printf( "%s é uma palavra reservada! \n", yytext );
-{OPERADORES}+ printf( "%s é um operador! \n", yytext );
-{ID}+ printf( "%s Contém letra(s)! \n", yytext );
-{NUM}+ printf( "%s Contém número(s)! \n", yytext );
-{STR}+ printf( "%s É uma string! \n", yytext );
+<COMENT>{ 
+"/*"			{level++; printf( "/*");}
+"*/"			{if(--level == 0){ BEGIN( INITIAL ); printf( "\nFim do comentário!\n");} else  printf( "*/");}
+\n			{ECHO;} 
+}
+{PALAVRASCHAVE}+ printf("Palavra-chave: %s\n", yytext );
+{IDINVALIDO}+ printf("error. ID invalido: %s\n", yytext);
+{OPERADORES} printf( "Operador: %s\n", yytext );
+{ID} printf("ID:%s\n", yytext );
+{NUM}+ printf("NUM: %s\n", yytext );
+{STR} printf( "String: %s\n", yytext );
 %%
 
 int main(void)
