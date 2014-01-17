@@ -3,7 +3,18 @@
 /*Código*/
 
 %option main
-	#include <stdio.h>
+  #include <stdio.h>
+
+PALAVRASCHAVE else|if|int|return|void|while|string
+SIMBOLOSESPECIAIS [-+*/<>=,;(){}]|[{[]|[]}]
+ID [a-z]|[A-Z]*
+NUM [0-9][0-9]*
+
 %%
-else|if|int|return|void|while |[-+*/<>=,;(){}]|=>|<=|==|!=|[[]|[]]|[{]|[}] puts( yytext );
+{PALAVRASCHAVE}+ printf( "%s é uma palavra reservada! \n", yytext );
+{SIMBOLOSESPECIAIS}+ printf( "%s é um símbolo especial! \n", yytext );
+{ID}+ printf( "%s Contém letra(s)! \n", yytext );
+{NUM}+ printf( "%s Contém número(s)! \n", yytext );
+
+
 .|\n|\r
