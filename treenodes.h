@@ -26,43 +26,43 @@ typedef char *string;
 
 /* (01) programa —> declaração-lista*/
 struct PROG {
-tDecList declaracao-lista;
+    tDecList declaracao-lista;
 };
 tProgram producao_programa_declaracaolista(tDecList declaracao-lista); /* programa —> declaração-lista */
 
 /* (02) declaração-lista —> declaração-lista declaração | declaração*/
 struct DECLIST{
-        enum {producao_decList, producao_declaracao} tipodeproducao;
-        union{	struct{
-tDecList declaracaoLista;
-tDec declaracao;
-} Tvariasdeclaracoes;
-tDec declaracao;
-} uniao;
+    enum {producao_decList, producao_declaracao} tipodeproducao;
+    union{
+        struct{
+            tDecList declaracaoLista;
+            tDec declaracao;
+        } Tvariasdeclaracoes;
+        tDec declaracao;
+    } uniao;
 };
 tDecList producao_declist_declaracaolista(tDecList declaracaoLista, tDec declaracao); /* declaracoes -> declaracoes declaracao */
 tDecList producao_declist_declaracao(tDec declaracao); /* declaracoes -> declaracao */
 
 /*(07) params -> param-lista|void */
 struct PARAMS {
-enum{producao_void, producao_paramlist} tipoDeProducao;
-
-union{
-string 'void';
-tParamList paramList;
-} uniao;
+    enum{producao_void, producao_paramlist} tipoDeProducao;
+    union{
+        string 'void';
+        tParamList paramList;
+    } uniao;
 };
+
 tParams producao_params_void(string 'void'); /* params -> param-lista */
 tParams producao_params_paramLista(tParamList paramList); /* params -> void */
 
 /*(19) var -> ID|ID[expressão] */
 struct VAR {
-enum{producao_id, producao_exp} tipoDeProducao;
-
-union{
-string id;
-tExp exp;
-} uniao;
+    enum{producao_id, producao_exp} tipoDeProducao;
+    union{
+        string id;
+        tExp exp;
+    } uniao;
 };
 tVar producao_var_id(string id); /* var -> ID */
 tVar producao_var_id_aC_expressao_fC(tExp exp); /* var -> ID[expressão] | aC ->Abre colchete, fC ->Fecha colchete */
@@ -75,11 +75,11 @@ tArgs producao_ativacao_ID_aP_args_fP(tArgs args); /* ativação —> ID ( args 
 
 /*(28) args -> arg-lista | vazio */
 struct ARGS {
-enum{producao_argList, producao_vazio} tipoDeProducao;
-
-union{	tArgList argLista;
-tVazio vazio;
-} uniao;
+    enum{producao_argList, producao_vazio} tipoDeProducao;
+    union{
+        tArgList argLista;
+        tVazio vazio;
+    } uniao;
 };
 tArgs producao_args_vazio(); /* args -> vazio */
 tArgs producao_args_argLista(tArgList argLista); /* args -> arg-lista */
@@ -87,12 +87,13 @@ tArgs producao_args_argLista(tArgList argLista); /* args -> arg-lista */
 /*(29) arg-lista -> arg-lista,expressão | expressão */
 struct ARGLIST{
         enum {producao_argList, producao_exp} tipodeproducao;
-        union{	struct{
-tArgList argLista;
-tExp exp;
-} Tvariasdeclaracoes;
-tExp exp;
-} uniao;
+        union{
+            struct{
+                tArgList argLista;
+                tExp exp;
+            } Tvariasdeclaracoes;
+            tExp exp;
+        } uniao;
 };
 tArgList producao_arglista_argList_vir_expressao(tArgList argLista, tExp exp); // arg-lista -> arg-lista,expressão | vir -> vírgula
 tArgList producao_arglista_expressao(tDec declaracao); // arg-lista -> expressão 
