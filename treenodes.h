@@ -9,30 +9,30 @@ NÓS DA ÁRVORE ABSTRATA DA ANÁLISE SINTÁTICA.
 typedef struct PROG *tProgram; /*programa*/
 typedef struct DECLIST *tDecList; /*declaração-lista*/
 typedef struct DEC *tDec; /*declaração*/
-typedef struct VARDEC *tDec; /*var-declaração*/
-typedef struct TIPOESP *tTipoesp; /*tipo-especificador*/
-typedef struct FUNDEC *tFundec; /*fun-declaração*/
-typedef struct PARAMS * tParams /*params*/
-typedef struct PARAMLIST *tParamList /*param-lista*/
+typedef struct VARDEC *tVarDec; /*var-declaração*/
+typedef struct TIPOESP *tTipoEsp; /*tipo-especificador*/
+typedef struct FUNDEC *tFunDec; /*fun-declaração*/
+typedef struct PARAMS *tParams; /*params*/
+typedef struct PARAMLIST *tParamList; /*param-lista*/
 typedef struct VAR *tVar; /*var*/
-typedef struct ARGLIST * tArgList /*arg-lista*/
-typedef struct ARGS * tArgs /*args*/
-typedef struct EXP * tExp /*expressão*/
-typedef struct VAZIO *tVazio /*vazio*/
-typedef struct ATIV *tAtiv /*ativação*/
+typedef struct ARGLIST *tArgList; /*arg-lista*/
+typedef struct ARGS *tArgs; /*args*/
+typedef struct EXP *tExp; /*expressão*/
+typedef struct VAZIO *tVazio; /*vazio*/
+typedef struct ATIV *tAtiv; /*ativação*/
 
 typedef char *string;
 
 
 /* (01) programa —> declaração-lista*/
 struct PROG {
-    tDecList declaracao-lista;
+    tDecList declaracaoLista;
 };
-tProgram producao_programa_declaracaolista(tDecList declaracao-lista); /* programa —> declaração-lista */
+tProgram producao_programa_declaracaolista(tDecList declaracaoLista); /* programa —> declaração-lista */
 
 /* (02) declaração-lista —> declaração-lista declaração | declaração*/
 struct DECLIST{
-    enum {producao_decList, producao_declaracao} tipodeproducao;
+    enum {producao_decList, producao_declaracao} tipoDeProducao;
     union{
         struct{
             tDecList declaracaoLista;
@@ -43,6 +43,44 @@ struct DECLIST{
 };
 tDecList producao_declist_declaracaolista(tDecList declaracaoLista, tDec declaracao); /* declaracoes -> declaracoes declaracao */
 tDecList producao_declist_declaracao(tDec declaracao); /* declaracoes -> declaracao */
+
+/*(03) declaração —> var-declaração | fun-declaração*/
+struct DEC {
+    enum{producao_varDec,producao_funDec}tipoDeProducao;
+    union{
+        tVarDec varDeclaracao;
+        tFunDec funDeclaracao;
+    } uniao;
+};
+tDec producao_varDec(tVarDec varDeclaracao );
+tDec producao_funDec(tDec funDeclaracao );
+
+/*(04) var-declaração —» tipo-especificador ID ; | tipo-especificador ID [ NUM ] ;*/
+struct VARDEC{
+   enum{producao_tipoEspecificador_ID_pontoevirgula,producao_tipoespecificador_ID_NUM}tipoDeProducao;
+   union{
+       struct{
+           tTipoEsp tipoEspecificador;
+           char* id;
+       }Tvariasdeclaracoes;
+       struct{
+           tTipoEsp tipoEspecificador;
+           char* id;  /* falta o '[]' q n sei como declara*/
+           int num;
+       };
+   };
+};
+
+
+/*(05) tipo-especificador -> int | void*/
+struct TIPOESP{
+    enum{producao_int,producao_void}tipoDeProducao;
+    union{
+        tTipoEsp tipoEspecificador;
+        string 'void';
+    };
+};
+
 
 /*(07) params -> param-lista|void */
 struct PARAMS {
