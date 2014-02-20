@@ -7,7 +7,7 @@ NÓS DA ÁRVORE ABSTRATA DA ANÁLISE SINTÁTICA.
 
 
 typedef struct PROG *tProgram; /*programa*/
-typedef struct DECLIST *tDeclist; /*declaração-lista*/
+typedef struct DECLIST *tDecList; /*declaração-lista*/
 typedef struct DEC *tDec; /*declaração*/
 typedef struct VARDEC *tDec; /*var-declaração*/
 typedef struct TIPOESP *tTipoesp; /*tipo-especificador*/
@@ -26,22 +26,22 @@ typedef char *string;
 
 /* (01) programa —> declaração-lista*/
 struct PROG {
-tDeclist declaracao-lista;
+tDecList declaracao-lista;
 };
-tProgram producao_programa_declaracaolista(tDeclist declaracao-lista); /* programa —> declaração-lista */
+tProgram producao_programa_declaracaolista(tDecList declaracao-lista); /* programa —> declaração-lista */
 
 /* (02) declaração-lista —> declaração-lista declaração | declaração*/
 struct DECLIST{
-        enum {producao_declist, producao_declaracao} tipodeproducao;
+        enum {producao_decList, producao_declaracao} tipodeproducao;
         union{	struct{
-tDeclist declaracaoLista;
+tDecList declaracaoLista;
 tDec declaracao;
 } Tvariasdeclaracoes;
 tDec declaracao;
 } uniao;
 };
-tDeclist producao_declist_declaracaolista(tDeclist declaracaoLista, tDec declaracao); /* declaracoes -> declaracoes declaracao */
-tDeclist producao_declist_declaracao(tDec declaracao); /* declaracoes -> declaracao */
+tDecList producao_declist_declaracaolista(tDecList declaracaoLista, tDec declaracao); /* declaracoes -> declaracoes declaracao */
+tDecList producao_declist_declaracao(tDec declaracao); /* declaracoes -> declaracao */
 
 /*(07) params -> param-lista|void */
 struct PARAMS {
