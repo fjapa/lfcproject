@@ -28,7 +28,7 @@ typedef char *string;
 struct PROG {
 tDeclist declaracao-lista;
 };
-
+tProgram producao_programa_declaracaolista(tDeclist declaracao-lista); /* programa —> declaração-lista */
 
 /* (02) declaração-lista —> declaração-lista declaração | declaração*/
 struct DECLIST{
@@ -40,7 +40,7 @@ tDec declaracao;
 tDec declaracao;
 } uniao;
 };
-tDeclist producao_declist_declist(tDeclist declaracaoLista, tDec declaracao); /* declaracoes -> declaracoes declaracao */
+tDeclist producao_declist_declaracaolista(tDeclist declaracaoLista, tDec declaracao); /* declaracoes -> declaracoes declaracao */
 tDeclist producao_declist_declaracao(tDec declaracao); /* declaracoes -> declaracao */
 
 /*(07) params -> param-lista|void */
@@ -65,7 +65,7 @@ tExp exp;
 } uniao;
 };
 tVar producao_var_id(string id); /* var -> ID */
-tVar producao_var_id_aC_exp_fC(tExp exp); /* var -> ID[expressão] | aC ->Abre colchete, fC ->Fecha colchete */
+tVar producao_var_id_aC_expressao_fC(tExp exp); /* var -> ID[expressão] | aC ->Abre colchete, fC ->Fecha colchete */
 
 /*(27) ativação —> ID ( args ) */
 struct ATIV {
@@ -94,8 +94,8 @@ tExp exp;
 tExp exp;
 } uniao;
 };
-tArgList producao_arglista_argList_vir_exp(tArgList argLista, tExp exp); // arg-lista -> arg-lista,expressão | vir -> vírgula
-tArgList producao_arglista_exp(tDec declaracao); // arg-lista -> expressão 
+tArgList producao_arglista_argList_vir_expressao(tArgList argLista, tExp exp); // arg-lista -> arg-lista,expressão | vir -> vírgula
+tArgList producao_arglista_expressao(tDec declaracao); // arg-lista -> expressão 
 #endif
 
 /*
