@@ -71,6 +71,33 @@ struct var {
 tVar producao_params_id(string id);
 tVar producao_params_id_aC_exp_fC(tVar params); /*aC ->Abre colchete | fC ->Fecha colchete*/
 
+/*(28) args -> arg-lista | vazio */
+struct args {
+	enum{producao_argLista, producao_vazio} tipoDeProducao;
+
+	union{	tArgLista argLista; 
+		tVazio vazio;
+	} uniao;
+}; 
+tArgs producao_args_vazio();
+tArgs producao_args_argLista(tArgs args); 
+
+/*(29) arg-lista -> arg-lista,expressão | expressão	*/
+struct argLista {
+	
+	enum{producao_declaracoes, Tuma_declaracao} tipo;
+
+	union{	struct{
+			tDeclaracoes declaracoes;
+			tDeclaracao declaracao;
+		} Tvariasdeclaracoes;
+		
+		tDeclaracao declaracao;
+
+	} uniao;
+
+};
+
 /*(EXEMPLO) S -> (S)|a	*/
 struct S {
 	
