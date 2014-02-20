@@ -9,30 +9,38 @@ NÓS DA ÁRVORE ABSTRATA DA ANÁLISE SINTÁTICA.
 typedef struct PROG *tProgram; /*programa*/
 typedef struct DECLIST *tDecList; /*declaração-lista*/
 typedef struct DEC *tDec; /*declaração*/
-typedef struct VARDEC *tVarDec; /*var-declaração*/
-typedef struct TIPOESP *tTipoEsp; /*tipo-especificador*/
-typedef struct FUNDEC *tFunDec; /*fun-declaração*/
-typedef struct PARAMS *tParams; /*params*/
+typedef struct VARDEC *tDec; /*var-declaração*/
+typedef struct TIPOESP *tTipoesp; /*tipo-especificador*/
+typedef struct FUNDEC *tFundec; /*fun-declaração*/
+typedef struct PARAMS * tParams; /*params*/
 typedef struct PARAMLIST *tParamList; /*param-lista*/
 typedef struct VAR *tVar; /*var*/
-typedef struct ARGLIST *tArgList; /*arg-lista*/
-typedef struct ARGS *tArgs; /*args*/
-typedef struct EXP *tExp; /*expressão*/
+typedef struct ARGLIST * tArgList; /*arg-lista*/
+typedef struct ARGS * tArgs; /*args*/
+typedef struct EXP * tExp; /*expressão*/
 typedef struct VAZIO *tVazio; /*vazio*/
 typedef struct ATIV *tAtiv; /*ativação*/
+typedef struct FATOR *tFator; /*fator*/
+typedef struct MULT * tMult; /*mult*/
+typedef struct TERMO * tTermo; /*termo*/
+typedef struct MULTFATOR *tMultFator; /*multfator*/
+typedef struct SOMA * tSoma; /*soma*/
+typedef struct SOMAEXP *tSomaExp; /*soma-expressão*/
+typedef struct RELACIONAL *tRelacional; /*relacional*/ 
+typedef struct SIMPLESEXP *tSimplesExp; /*simples-expressão*/
 
 typedef char *string;
 
 
 /* (01) programa —> declaração-lista*/
 struct PROG {
-    tDecList declaracaoLista;
+    tDecList declaracao-lista;
 };
-tProgram producao_programa_declaracaolista(tDecList declaracaoLista); /* programa —> declaração-lista */
+tProgram producao_programa_declaracaolista(tDecList declaracao-lista); /* programa —> declaração-lista */
 
 /* (02) declaração-lista —> declaração-lista declaração | declaração*/
 struct DECLIST{
-    enum {producao_decList, producao_declaracao} tipoDeProducao;
+    enum {producao_decList, producao_declaracao} tipodeproducao;
     union{
         struct{
             tDecList declaracaoLista;
@@ -65,7 +73,7 @@ struct VARDEC{
        }Tvariasdeclaracoes;
        struct{
            tTipoEsp tipoEspecificador;
-           char* id;  /* falta o '[]' q n sei como declara*/
+           char* id; /* falta o '[]' q n sei como declara*/
            int num;
        };
    };
@@ -80,7 +88,6 @@ struct TIPOESP{
         string 'void';
     };
 };
-
 
 /*(07) params -> param-lista|void */
 struct PARAMS {
@@ -105,11 +112,111 @@ struct VAR {
 tVar producao_var_id(string id); /* var -> ID */
 tVar producao_var_id_aC_expressao_fC(tExp exp); /* var -> ID[expressão] | aC ->Abre colchete, fC ->Fecha colchete */
 
+/*(20) simples-expressão —> soma-expressão relacional soma-expressão | soma-expressão */
+struct SIMPLESEXP{
+    enum {producao_somaexpressao, producao_relacional, producao_somaexpressao} tipodeproducao; //Nesse caso, surge uma dúvida. Duas produções iguais.
+    union{
+        struct{
+            tSomaExp somaExp;
+            tRelacional relacional;
+			tSomaExp somaExp;
+        } Tvariasdeclaracoes;
+        tSomaExp somaExp;
+    } uniao;
+};
+tSimplesExp producao_simplesexpressao_somaexpressao_relacional_somaexpressao(tSomaExp somaExp, tRelacional relacional, tSomaExp somaExp); /* simples-expressão —> soma-expressão relacional soma-expressão */
+tSimplesExp producao_simplesexpressao_somaexpressao(tSomaExp somaExp); /* simples-expressão —> soma-expressão */
+
+/*(21) relacional -> <= | < | > | >= | = | != */
+struct RELACIONAL {
+    enum{producao_menorigual, producao_menor, producao_maior, producao_maiorigual, producao_igual, producao_diferente} tipoDeProducao;
+    union{
+		char menorigual;
+		char menor;
+		char maior;
+		char maiorigual;
+		char igual;
+		char diferente;
+    } uniao;
+};
+tRelacional producao_relacional_menorigual(char menorigual); /* relacional -> <= */
+tRelacional producao_relacional_menor(char menor); /* relacional -> < */
+tRelacional producao_relacional_maior(char maior); /* relacional -> > */
+tRelacional producao_relacional_maiorigual(char maiorigual); /* relacional -> >= */
+tRelacional producao_relacional_igual(char igual); /* relacional -> = */
+tRelacional producao_relacional_diferente(char diferente); /* relacional -> != */
+
+/*(22) soma-expressão —> soma-expressão soma termo | termo */
+struct SOMAEXP{
+    enum {producao_somaexpressao, producao_soma, producao_termo} tipodeproducao;
+    union{
+        struct{
+            tSomaExp somaExp;
+            tSoma soma;
+			tTermo termo;
+        } Tvariasdeclaracoes;
+        tTermo termo;
+    } uniao;
+};
+tSomaExp producao_somaexpressao_somaexpressao_soma_termo(tSomaExp somaExp, tSoma soma, tTermo termo); /* soma-expressão —> soma-expressão soma termo */
+tSomaExp producao_somaexpressao_termo(tTermo termo); /* soma-expressão —> termo */
+
+/*(23) soma —> + | - */
+struct SOMA {
+    enum{producao_mais, producao_menos} tipoDeProducao;
+    union{
+		char mais;
+		char menos;
+    } uniao;
+};
+tSoma producao_soma_mais(char mais); /* soma -> + */
+tSoma producao_soma_menos(char menos); /* soma -> - */
+
+/*(24) termo —> termo multfator | fator */
+struct TERMO{
+    enum {producao_termo, producao_multfator} tipodeproducao;
+    union{
+        struct{
+            tTermo termo;
+            tMultFator multFator;
+        } Tvariasdeclaracoes;
+        tFator fator;
+    } uniao;
+};
+tTermo producao_termo_termo_multfator(tTermo termo, tMultFator multFator); /* termo -> termo multfator */
+tTermo producao_termo_fator(tFator fator); /* termo -> fator */
+
+/*(25) mult -> * | / */
+struct MULT {
+    enum{producao_asterisco, producao_aBarra} tipoDeProducao;
+    union{
+		char asterisco;
+		char aBarra;
+    } uniao;
+};
+tMult producao_mult_aBarra(char aBarra); /* mult -> / */
+tMult producao_mult_asterisco(char asterisco); /* mult -> * */
+
+/*(26) fator -> ( expressão ) | var | ativação | NUM */
+struct FATOR {
+    enum{producao_expressao, producao_var, producao_ativacao, producao_num} tipoDeProducao;
+    union{
+        tExp expressao;
+        tVar var;
+		tAtiv ativacao;
+		string NUM;
+    } uniao;
+};
+tFator producao_fator_aP_expressao_fP(tExp expressao); /* fator -> ( expressão ) */
+tFator producao_fator_var(tVar avar); /* fator -> var */
+tFator producao_fator_ativacao(tAtiv ativacao); /* fator -> ativação */
+tFator producao_fator_num(string num); /* fator -> NUM */
+
 /*(27) ativação —> ID ( args ) */
 struct ATIV {
-	tArgs args;
+tArgs args;
 };
-tArgs producao_ativacao_ID_aP_args_fP(tArgs args); /* ativação —> ID ( args )  */
+tAtiv producao_ativacao_ID_aP_args_fP(tArgs args); /* ativação —> ID ( args ) */
 
 /*(28) args -> arg-lista | vazio */
 struct ARGS {
@@ -134,7 +241,7 @@ struct ARGLIST{
         } uniao;
 };
 tArgList producao_arglista_argList_vir_expressao(tArgList argLista, tExp exp); // arg-lista -> arg-lista,expressão | vir -> vírgula
-tArgList producao_arglista_expressao(tDec declaracao); // arg-lista -> expressão 
+tArgList producao_arglista_expressao(tDec declaracao); // arg-lista -> expressão
 #endif
 
 /*
@@ -158,7 +265,7 @@ tArgList producao_arglista_expressao(tDec declaracao); // arg-lista -> expressã
 (18) expressão -> var = expressão | simples-expressão
 (19) var —> ID | I D [ expressão ]
 (20) simples-expressão —> soma-expressão relacional soma-expressão | soma-expressão
-(21) relacional -> <= | < | > | >= | » | !=
+(21) relacional -> <= | < | > | >= | = | !=
 (22) soma-expressão —> soma-expressão soma termo | termo
 (23) soma —> + | -
 (24) termo —> termo multfator | fator
