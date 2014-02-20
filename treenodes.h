@@ -2,123 +2,93 @@
 #define TREENODES_H
 
 /*
-	NÓS DA ÁRVORE ABSTRATA DA ANÁLISE SINTÁTICA.
+NÓS DA ÁRVORE ABSTRATA DA ANÁLISE SINTÁTICA.
 */
 
 
-typedef struct PROG *tProgram;    /*programa*/
+typedef struct PROG *tProgram; /*programa*/
 typedef struct DECLIST *tDeclist; /*declaração-lista*/
-typedef struct DEC *tDec;         /*declaração*/
-typedef struct VARDEC *tDec;      /*var-declaração*/
+typedef struct DEC *tDec; /*declaração*/
+typedef struct VARDEC *tDec; /*var-declaração*/
 typedef struct TIPOESP *tTipoesp; /*tipo-especificador*/
-typedef struct FUNDEC *tFundec;   /*fun-declaração*/
-
-typedef struct S *SS;
-typedef struct params * tParams
-typedef struct var *tVar;
-typedef struct declaracaoLista * tDeclaracaoLista
-typedef struct argLista * tArgLista
-typedef struct args * tArgs
-typedef struct vazio *tVazio
+typedef struct FUNDEC *tFundec; /*fun-declaração*/
+typedef struct PARAMS * tParams /*params*/
+typedef struct VAR *tVar; /*var*/
+typedef struct ARGLIST * tArgList /*arg-lista*/
+typedef struct ARGS * tArgs /*args*/
+typedef struct EXP * tExp /*expressão*/
+typedef struct VAZIO *tVazio /*vazio*/
 
 typedef char *string;
 
 
 /* (1) programa —> declaração-lista*/
 struct PROG {
-	tDeclist declaracao-lista;
+tDeclist declaracao-lista;
 };
 
 
 /* (2) declaração-lista —> declaração-lista declaração | declaração*/
-
 struct DECLIST{
         enum {producao_declist, producao_declaracao} tipodeproducao;
         union{	struct{
-			tDeclist declaracaoLista;
-			tDec declaracao;
-		} Tvariasdeclaracoes;
-		
-		tDec declaracao;
+tDeclist declaracaoLista;
+tDec declaracao;
+} Tvariasdeclaracoes;
 
-	} uniao;
+tDec declaracao;
+
+} uniao;
 };
 
 
-/*(7) params -> param-lista|void	*/
-struct params {
-	enum{producao_void, producao_paramLista} tipoDeProducao;
-	
-	union{
-	
-		string 'void';
-		
-		tParams params;
-		
-	} uniao;
+/*(7) params -> param-lista|void */
+struct PARAMS {
+enum{producao_void, producao_paramLista} tipoDeProducao;
+
+union{
+string 'void';
+tParams params;
+} uniao;
 };
 tParams producao_params_void(string void);
 tParams producao_params_paramLista(tParams params);
 
-/*(19) var -> ID|ID[expressão]	*/
-struct var {
-	enum{producao_id, producao_expressao} tipoDeProducao;
-	
-	union{
-	
-		string id;
-		
-		tVar var;
-		
-	} uniao;
+/*(19) var -> ID|ID[expressão] */
+struct VAR {
+enum{producao_id, producao_expressao} tipoDeProducao;
+
+union{
+string id;
+tVar var;
+} uniao;
 };
 tVar producao_params_id(string id);
 tVar producao_params_id_aC_exp_fC(tVar params); /*aC ->Abre colchete | fC ->Fecha colchete*/
 
 /*(28) args -> arg-lista | vazio */
-struct args {
-	enum{producao_argLista, producao_vazio} tipoDeProducao;
+struct ARGS {
+enum{producao_argLista, producao_vazio} tipoDeProducao;
 
-	union{	tArgLista argLista; 
-		tVazio vazio;
-	} uniao;
-}; 
+union{	tArgLista argLista;
+tVazio vazio;
+} uniao;
+};
 tArgs producao_args_vazio();
-tArgs producao_args_argLista(tArgs args); 
+tArgs producao_args_argLista(tArgs args);
 
-/*(29) arg-lista -> arg-lista,expressão | expressão	*/
-struct argLista {
-	
-	enum{producao_declaracoes, Tuma_declaracao} tipo;
+/*(29) arg-lista -> arg-lista,expressão | expressão */
+struct ARGLIST{
+        enum {producao_arg-lista, producao_expressao} tipodeproducao;
+        union{	struct{
+tArgList argLista;
+tExp expressao;
+} Tvariasdeclaracoes;
 
-	union{	struct{
-			tDeclaracoes declaracoes;
-			tDeclaracao declaracao;
-		} Tvariasdeclaracoes;
-		
-		tDeclaracao declaracao;
+tExp expressao;
 
-	} uniao;
-
+} uniao;
 };
-
-/*(EXEMPLO) S -> (S)|a	*/
-struct S {
-	
-	enum{producao_a, producao_s} tipoDeProducao;
-	
-	union{
-	
-		string a;
-		
-		SS s;
-		
-	} uniao;
-};
-
-SS producao_S_a(string a);
-SS producao_S_abpr_S_fcpar(SS s);
-
 
 #endif
 
@@ -126,13 +96,13 @@ SS producao_S_abpr_S_fcpar(SS s);
 programa —> declaração-lista
 declaração-lista —> declaração-lista declaração | declaração
 declaração —> var-declaração | fun-declaração
-var-declaração —» tipo-especificador ID ; | tipo-especificador ID [ NUM ] ;  
-tipo-especificador -> int | void 
+var-declaração —» tipo-especificador ID ; | tipo-especificador ID [ NUM ] ;
+tipo-especificador -> int | void
 fun-declaração —> tipo-especificador ID ( params ) composto-decl
-params —> param-lista | void 
-param-lista —> param-lista, param | param 
-param —> tipo-especificador ID | tipo-especificador ID [] 
-composto-decl —> { local-declarações statement-lista 
+params —> param-lista | void
+param-lista —> param-lista, param | param
+param —> tipo-especificador ID | tipo-especificador ID []
+composto-decl —> { local-declarações statement-lista
 local-declarações -> local-declarações var-declaração | vazio
 statement-lista —> statement-lista statement | vazio
 statement —> expressão-decl | composto-decl | seleção-decl | iteração-decl | retorno-decl
@@ -151,5 +121,5 @@ mult -> * | /
 fator -> ( expressão ) | var | ativação | NUM
 ativação —> ID ( args )
 args —> arg-lista | vazio
-arg-lista -> arg-lista, expressão | expressão 
+arg-lista -> arg-lista, expressão | expressão
 */
