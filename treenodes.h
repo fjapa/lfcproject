@@ -16,6 +16,10 @@ typedef struct FUNDEC *tFundec;   /*fun-declaração*/
 typedef struct S *SS;
 typedef struct params * tParams
 typedef struct var *tVar;
+typedef struct declaracaoLista * tDeclaracaoLista
+typedef struct argLista * tArgLista
+typedef struct args * tArgs
+typedef struct vazio *tVazio
 
 typedef char *string;
 
