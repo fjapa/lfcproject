@@ -9,9 +9,9 @@ NÓS DA ÁRVORE ABSTRATA DA ANÁLISE SINTÁTICA.
 typedef struct PROG *tProgram; /*programa*/
 typedef struct DECLIST *tDecList; /*declaração-lista*/
 typedef struct DEC *tDec; /*declaração*/
-typedef struct VARDEC *tDec; /*var-declaração*/
-typedef struct TIPOESP *tTipoesp; /*tipo-especificador*/
-typedef struct FUNDEC *tFundec; /*fun-declaração*/
+typedef struct VARDEC *tVarDec; /*var-declaração*/
+typedef struct TIPOESP *tTipoEsp; /*tipo-especificador*/
+typedef struct FUNDEC *tFunDec; /*fun-declaração*/
 typedef struct PARAMS * tParams; /*params*/
 typedef struct PARAMLIST *tParamList; /*param-lista*/
 typedef struct VAR *tVar; /*var*/
@@ -39,13 +39,13 @@ typedef struct STATLIST *tStatList;/*statement-lista*/
 
 typedef char *string;
 
-/* (01) programa —> declaração-lista*/
+/*(01) programa —> declaração-lista*/
 struct PROG {
     tDecList declaracaoLista;
 };
 tProgram producao_programa_declaracaolista(tDecList declaracaoLista); /* programa —> declaração-lista */
 
-/* (02) declaração-lista —> declaração-lista declaração | declaração*/
+/*(02) declaração-lista —> declaração-lista declaração | declaração*/
 struct DECLIST{
     enum {producao_decList, producao_declaracao} tipoDeProducao;
     union{
@@ -101,7 +101,7 @@ struct TIPOESP{
 tTipoEsp producao_int(tTipoEsp tipoEspecificador);
 tTipoEsp producao_void(tVazio vazio);
 
-/*(6) fun-declaração —> tipo-especificador ID ( params ) composto-decl*/
+/*(06) fun-declaração —> tipo-especificador ID ( params ) composto-decl*/
 struct FUNDEC {
     tTipoEsp tipoEsp;
     char* ID;
@@ -155,7 +155,7 @@ struct PARAM{
     }uniao;
 };
 tParam producao_tipoEsp_ID(tTipoEsp tipoEsp,char* id);
-tTipoEsp producao_tipoEsp_ID_colchetes (tTipoEsp tipoEsp,char* id,char abreColchete, char fechaColchete);
+tParam producao_tipoEsp_ID_colchetes (tTipoEsp tipoEsp,char* id,char abreColchete, char fechaColchete); 
 
 /*(10) composto-decl —> { local-declarações statement-lista*/
 struct COMPDEC{
@@ -172,11 +172,43 @@ struct LOCALDEC{
        struct{
            tLocalDec localDec;
 		   tVarDec varDec;
-           tVazio vazio;
         } Tvariasdeclaracoes;
 		tVazio vazio;
     } uniao;
 };
+tLocalDec producao_localDeclaracoes_localDeclaracoes_varDeclaracao(tLocalDec localDec, tVarDec varDec);
+tLocalDec producao_localDeclaracoes_vazio();
+
+/*(12) statement-lista —> statement-lista statement | vazio */
+struct STATLIST{
+   enum{producao_statement_lista, producao_statement}tipoDeProducao;
+   union{
+       struct{
+           tStatList statList;
+		   tStat statement;
+        } Tvariasdeclaracoes;
+		tVazio vazio;
+    } uniao;
+};
+tStatList producao_statementLista_statement(tStatList statList, tStat statement);
+tStatList producao_localDeclaracoes_vazio();
+
+/*(13) statement —> expressão-decl | composto-decl | seleção-decl | iteração-decl | retorno-decl*/
+struct STAT{
+    enum{producao_expressaoDecl,producao_compostoDecl,producao_selecaoDecl,producao_iteracaoDecl,producao_retornoDecl}tipoDeProducao;
+    union{
+        tExpDec expressaodecl;
+        tCompDec compDec;
+        tSelDec selDec;
+        tIterDec iterDec;
+        tRetDec retDec;
+    }uniao;
+};
+tStat producao_expressaoDecl(tExpDec expressaodecl);
+tStat producao_compostoDecl(tCompDec compDec);
+tStat producao_selecaoDec (tSelDec selDec);
+tStat producao_iteracaoDecl(tIterDec iterDec);
+tStat producao_retornoDecl(tRetDec retDec);
 
 /*(14) expressão-decl -> expressão ; | ; */
 struct EXPDEC {
