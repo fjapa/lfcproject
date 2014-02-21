@@ -10,8 +10,8 @@ typedef struct PROG *tProgram; /*programa*/
 typedef struct DECLIST *tDecList; /*declaração-lista*/
 typedef struct DEC *tDec; /*declaração*/
 typedef struct VARDEC *tDec; /*var-declaração*/
-typedef struct TIPOESP *tTipoEsp; /*tipo-especificador*/
-typedef struct FUNDEC *tFunDec; /*fun-declaração*/
+typedef struct TIPOESP *tTipoesp; /*tipo-especificador*/
+typedef struct FUNDEC *tFundec; /*fun-declaração*/
 typedef struct PARAMS * tParams; /*params*/
 typedef struct PARAMLIST *tParamList; /*param-lista*/
 typedef struct VAR *tVar; /*var*/
@@ -31,10 +31,10 @@ typedef struct SIMEXP *tSimExp; /*simples-expressão*/
 typedef struct RETDEC *tRetDec; /*retorno-decl*/
 typedef struct ITDEC *tIterDec; /*iteração-decl*/
 typedef struct STAT *tStat; /*statement*/
-typedef struct EXPDEC *tExpDec;/*expressão-decl*/
+typedef struct EXPDEC *tExpDec; /*expressão-decl*/
 typedef struct COMPDEC *tCompDec;/*composto-decl*/
-typedef struct SELDEC *tSelDec;/*seleção-decl*/
-typedef struct LOCALDEC *tLocalDec;/*local-declarações*/
+typedef struct SELDEC *tSelDec; /*seleção-decl*/
+typedef struct LOCALDEC *tLocalDec; /*local-decl*/
 typedef struct STATLIST *tStatList;/*statement-lista*/
 
 typedef char *string;
@@ -165,22 +165,47 @@ struct COMPDEC{
 };
 tCompDec producao_abreChave_localDec_statList(char abreChaves, tLocalDec localDec, tStatList statList);
 
-/*(13) statement —> expressão-decl | composto-decl | seleção-decl | iteração-decl | retorno-decl*/
-struct STAT{
-    enum{producao_expressaoDecl,producao_compostoDecl,producao_selecaoDecl,producao_iteracaoDecl,producao_retornoDecl}tipoDeProducao;
-    union{
-        tExpDec expressaodecl;
-        tCompDec compDec;
-        tSelDec selDec;
-        tIterDec iterDec;
-        tRetDec retDec;
-    }uniao;
+/*(11) local-declarações -> local-declarações var-declaração | vazio */
+struct LOCALDEC{
+   enum{producao_localDeclacracoes_varDeclaracao, producao_vazio}tipoDeProducao;
+   union{
+       struct{
+           tLocalDec localDec;
+		   tVarDec varDec;
+           tVazio vazio;
+        } Tvariasdeclaracoes;
+		tVazio vazio;
+    } uniao;
 };
-tStat producao_expressaoDecl(tExpDec expressaodecl);
-tStat producao_compostoDecl(tCompDec compDec);
-tStat producao_selecaoDec (tSelDec selDec);
-tStat producao_iteracaoDecl(tIterDec iterDec);
-tStat producao_retornoDecl(tRetDec retDec);
+
+/*(14) expressão-decl -> expressão ; | ; */
+struct EXPDEC {
+    enum{producao_expDec, producao_pontoVirgula} tipoDeProducao;
+    union{
+        tExpDec expDec;
+        char pontoVirgula;
+    } uniao;
+};
+tExpDec producao_expdec_expressaoDecl(tExpDec expDec); /* expressão-decl -> expressão ; */
+tExpDec producao_expdec_pontoVirgula(char pontoVirgula); /* expressão-decl -> ; */
+
+/*(15) seleção-decl —> if ( expressão ) statement | if ( expressão ) statement else statement*/
+struct SELDEC{
+   enum{producao_if_aP_expressao_fP_statement,producao_if_aP_expressao_fP_statement_else_statement}tipoDeProducao;
+   union{
+       struct{
+           tExp exp;
+		   tStat statement;
+       }Tvariasdeclaracoes;
+       struct{
+           tExp exp;
+		   tStat statement;
+		   tStat statement2;
+       };
+   };
+};
+tSeleDec producao_seleDec_if_aP_expressao_fP_statement(tExp Exp, tStat stat); /* seleção-decl —> if ( expressão ) statement */
+tSeleDec producao_seleDec_if_aP_expressao_fP_statement_else_statement(tExp Exp, tStat stat, tStat stat2); /* seleção-decl —> if ( expressão ) statement else statement */
 
 /*(16) iteração-decl —> while ( expressão ) statement */
 struct ITDEC{
@@ -192,7 +217,7 @@ struct ITDEC{
         } Tvariasdeclaracoes;
     } uniao;
 };
-tItDec producao_itDec_while_aP_expressao_fP_statement(tExp Exp, tStat stat); /* iteração-decl —> while ( expressão ) statement */
+tIterDec producao_itDec_while_aP_expressao_fP_statement(tExp Exp, tStat stat); /* iteração-decl —> while ( expressão ) statement */
 
 /*(17) retorno-decl —> return ; | return expressão ; */
 struct RETDEC {
