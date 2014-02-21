@@ -27,20 +27,22 @@ typedef struct MULTFATOR *tMultFator; /*multfator*/
 typedef struct SOMA * tSoma; /*soma*/
 typedef struct SOMAEXP *tSomaExp; /*soma-expressão*/
 typedef struct RELACIONAL *tRelacional; /*relacional*/ 
-typedef struct SIMPLESEXP *tSimplesExp; /*simples-expressão*/
+typedef struct SIMEXP *tSimExp; /*simples-expressão*/
+typedef struct RETDEC *tRetDec; /*retorno-decl*/
+typedef struct ITDEC *tItDec; /*iteração-decl*/
+typedef struct STAT *tStat; /*statement*/
 
 typedef char *string;
 
-
 /* (01) programa —> declaração-lista*/
 struct PROG {
-    tDecList declaracao-lista;
+    tDecList declaracaoLista;
 };
-tProgram producao_programa_declaracaolista(tDecList declaracao-lista); /* programa —> declaração-lista */
+tProgram producao_programa_declaracaolista(tDecList declaracaoLista); /* programa —> declaração-lista */
 
 /* (02) declaração-lista —> declaração-lista declaração | declaração*/
 struct DECLIST{
-    enum {producao_decList, producao_declaracao} tipodeproducao;
+    enum {producao_decList, producao_declaracao} tipoDeProducao;
     union{
         struct{
             tDecList declaracaoLista;
@@ -89,6 +91,7 @@ struct TIPOESP{
     };
 };
 
+
 /*(07) params -> param-lista|void */
 struct PARAMS {
     enum{producao_void, producao_paramlist} tipoDeProducao;
@@ -97,9 +100,45 @@ struct PARAMS {
         tParamList paramList;
     } uniao;
 };
-
 tParams producao_params_void(string 'void'); /* params -> param-lista */
 tParams producao_params_paramLista(tParamList paramList); /* params -> void */
+
+/*(16) iteração-decl —> while ( expressão ) statement */
+struct ITDEC{
+    enum {producao_expressao, producao_statement} tipodeproducao;
+    union{
+        struct{
+            tExp Exp;
+            tStatement statement;
+        } Tvariasdeclaracoes;
+    } uniao;
+};
+tItDec producao_itDec_while_aP_expressao_fP_statement(tExp Exp, tStat stat); /* iteração-decl —> while ( expressão ) statement */
+
+/*(17) retorno-decl —> return ; | return expressão ; */
+struct RETDEC {
+    enum{producao_pontoVirgula, producao_expressao} tipoDeProducao;
+    union{
+        char pontoVirgula;
+        tExp exp;
+    } uniao;
+};
+tRetDec producao_retornoDecl_return_pontoVirgula(char pontoVirgula); /* retorno-decl -> return ; */
+tRetDec producao_retornoDecl_return(tExp exp); /* retorno-decl -> return expressão */
+
+/*(18) expressão -> var = expressão | simples-expressão */
+struct EXP{
+    enum {producao_varIgualExpressao, producao_simplesExpressao} tipodeproducao;
+    union{
+        struct{
+            tVar var;
+            tExp expressao;
+        } Tvariasdeclaracoes;
+        tSimExp simplesExp;
+    } uniao;
+};
+tExp producao_expressao_varIgualExpressao(tVar var, tExp expressao); /* expressao -> var = expressao */
+tExp producao_expressao_simplesExpressao(tSimExp simplesExp); /* expressao -> simples-expressão */
 
 /*(19) var -> ID|ID[expressão] */
 struct VAR {
@@ -113,7 +152,7 @@ tVar producao_var_id(string id); /* var -> ID */
 tVar producao_var_id_aC_expressao_fC(tExp exp); /* var -> ID[expressão] | aC ->Abre colchete, fC ->Fecha colchete */
 
 /*(20) simples-expressão —> soma-expressão relacional soma-expressão | soma-expressão */
-struct SIMPLESEXP{
+struct SIMEXP{
     enum {producao_somaexpressao, producao_relacional, producao_somaexpressao} tipodeproducao; //Nesse caso, surge uma dúvida. Duas produções iguais.
     union{
         struct{
@@ -124,8 +163,8 @@ struct SIMPLESEXP{
         tSomaExp somaExp;
     } uniao;
 };
-tSimplesExp producao_simplesexpressao_somaexpressao_relacional_somaexpressao(tSomaExp somaExp, tRelacional relacional, tSomaExp somaExp); /* simples-expressão —> soma-expressão relacional soma-expressão */
-tSimplesExp producao_simplesexpressao_somaexpressao(tSomaExp somaExp); /* simples-expressão —> soma-expressão */
+tSimExp producao_simplesexpressao_somaexpressao_relacional_somaexpressao(tSomaExp somaExp, tRelacional relacional, tSomaExp somaExp); /* simples-expressão —> soma-expressão relacional soma-expressão */
+tSimExp producao_simplesexpressao_somaexpressao(tSomaExp somaExp); /* simples-expressão —> soma-expressão */
 
 /*(21) relacional -> <= | < | > | >= | = | != */
 struct RELACIONAL {
