@@ -116,17 +116,6 @@ tFunDec producao_tipoEsp_ID_params_compDec(tTipoEsp tipoEsp, char* ID, char abre
 struct PARAMS {
     enum{producao_void, producao_paramlist} tipoDeProducao;
     union{
-        string 'void';
-        tParamList paramList;
-    } uniao;
-};
-tParams producao_params_void(string 'void'); /* params -> param-lista */
-tParams producao_params_paramLista(tParamList paramList); /* params -> void */
-
-/*(07) params -> param-lista|void */
-struct PARAMS {
-    enum{producao_void, producao_paramlist} tipoDeProducao;
-    union{
         tVazio vazio;/*void*/
         tParamList paramList;
     } uniao;
