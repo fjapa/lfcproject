@@ -10,8 +10,8 @@ typedef struct PROG *tProgram; /*programa*/
 typedef struct DECLIST *tDecList; /*declaração-lista*/
 typedef struct DEC *tDec; /*declaração*/
 typedef struct VARDEC *tDec; /*var-declaração*/
-typedef struct TIPOESP *tTipoesp; /*tipo-especificador*/
-typedef struct FUNDEC *tFundec; /*fun-declaração*/
+typedef struct TIPOESP *tTipoEsp; /*tipo-especificador*/
+typedef struct FUNDEC *tFunDec; /*fun-declaração*/
 typedef struct PARAMS * tParams; /*params*/
 typedef struct PARAMLIST *tParamList; /*param-lista*/
 typedef struct VAR *tVar; /*var*/
@@ -29,8 +29,13 @@ typedef struct SOMAEXP *tSomaExp; /*soma-expressão*/
 typedef struct RELACIONAL *tRelacional; /*relacional*/ 
 typedef struct SIMEXP *tSimExp; /*simples-expressão*/
 typedef struct RETDEC *tRetDec; /*retorno-decl*/
-typedef struct ITDEC *tItDec; /*iteração-decl*/
+typedef struct ITDEC *tIterDec; /*iteração-decl*/
 typedef struct STAT *tStat; /*statement*/
+typedef struct EXPDEC *tExpDec;/*expressão-decl*/
+typedef struct COMPDEC *tCompDec;/*composto-decl*/
+typedef struct SELDEC *tSelDec;/*seleção-decl*/
+typedef struct LOCALDEC *tLocalDec;/*local-declarações*/
+typedef struct STATLIST *tStatList;/*statement-lista*/
 
 typedef char *string;
 
@@ -75,22 +80,37 @@ struct VARDEC{
        }Tvariasdeclaracoes;
        struct{
            tTipoEsp tipoEspecificador;
-           char* id; /* falta o '[]' q n sei como declara*/
+           char* id;
+           char abreColchetes;
            int num;
-       };
-   };
+           char fechaColchetes;
+       }Tvariasdeclaracoes2;
+   }uniao;
 };
-
+tVarDec producao_tipoEspecificador_ID_pontoevirgula(tTipoEsp tipoEspecificador, char* id);
+tVarDec producao_tipoespecificador_ID_NUM(tTipoEsp tipoEspecificador,char* id,int num, char fechaColchetes);
 
 /*(05) tipo-especificador -> int | void*/
 struct TIPOESP{
     enum{producao_int,producao_void}tipoDeProducao;
     union{
         tTipoEsp tipoEspecificador;
-        string 'void';
+        tVazio vazio; /*void*/
     };
 };
+tTipoEsp producao_int(tTipoEsp tipoEspecificador);
+tTipoEsp producao_void(tVazio vazio);
 
+/*(6) fun-declaração —> tipo-especificador ID ( params ) composto-decl*/
+struct FUNDEC {
+    tTipoEsp tipoEsp;
+    char* ID;
+    char abreParenteses;
+    tParams params;
+    char fechaParentese;
+    tCompDec compDec;
+};
+tFunDec producao_tipoEsp_ID_params_compDec(tTipoEsp tipoEsp, char* ID, char abreParenteses,tParams params,char fechaParentese, tCompDec compDec);
 
 /*(07) params -> param-lista|void */
 struct PARAMS {
@@ -102,6 +122,76 @@ struct PARAMS {
 };
 tParams producao_params_void(string 'void'); /* params -> param-lista */
 tParams producao_params_paramLista(tParamList paramList); /* params -> void */
+
+/*(07) params -> param-lista|void */
+struct PARAMS {
+    enum{producao_void, producao_paramlist} tipoDeProducao;
+    union{
+        tVazio vazio;/*void*/
+        tParamList paramList;
+    } uniao;
+};
+tParams producao_params_void(tVazio vazio); /* params -> param-lista */
+tParams producao_paramLista(tParamList paramList); /* params -> void */
+
+/*(08) param-lista —> param-lista, param | param*/
+struct PARAMLIST{
+    enum{producao_paramList_param, producao_param}tipoDeProducao;
+    union{
+        struct{
+            tParamList paramList;
+            char virgula;
+            tParam param;
+        }TvariasDeclaracoes;
+        tParam param;
+    }uniao;
+};
+tParamList producao_paramList_param(tParamList paramList,char virgula, tParam param);
+tParamList producao_param(tParam param);
+
+/*(09) param —> tipo-especificador ID | tipo-especificador ID []*/
+struct PARAM{
+    enum{producao_tipoEsp_ID,producao_tipoEsp_ID_colchetes}tipoDeProducao;
+    union{
+        struct{
+            tTipoEsp tipoEsp;
+            char* id;
+        }TvariasDeclaracoes;
+        struct{
+            tTipoEsp tipoEsp;
+            char* id;
+            char abreColchete;
+            char fechaColchete;
+        }tvariasDeclaracoes2;
+    }uniao;
+};
+tParam producao_tipoEsp_ID(tTipoEsp tipoEsp,char* id);
+tTipoEsp producao_tipoEsp_ID_colchetes (tTipoEsp tipoEsp,char* id,char abreColchete, char fechaColchete);
+
+/*(10) composto-decl —> { local-declarações statement-lista*/
+struct COMPDEC{
+    char abreChaves;
+    tLocalDec localDec;
+    tStatList statList;
+};
+tCompDec producao_abreChave_localDec_statList(char abreChaves, tLocalDec localDec, tStatList statList);
+
+/*(13) statement —> expressão-decl | composto-decl | seleção-decl | iteração-decl | retorno-decl*/
+struct STAT{
+    enum{producao_expressaoDecl,producao_compostoDecl,producao_selecaoDecl,producao_iteracaoDecl,producao_retornoDecl}tipoDeProducao;
+    union{
+        tExpDec expressaodecl;
+        tCompDec compDec;
+        tSelDec selDec;
+        tIterDec iterDec;
+        tRetDec retDec;
+    }uniao;
+};
+tStat producao_expressaoDecl(tExpDec expressaodecl);
+tStat producao_compostoDecl(tCompDec compDec);
+tStat producao_selecaoDec (tSelDec selDec);
+tStat producao_iteracaoDecl(tIterDec iterDec);
+tStat producao_retornoDecl(tRetDec retDec);
 
 /*(16) iteração-decl —> while ( expressão ) statement */
 struct ITDEC{
