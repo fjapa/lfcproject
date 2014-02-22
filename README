@@ -33,10 +33,10 @@ Gramática da linguagem:
 (18) expressão -> var = expressão | simples-expressão
 (19) var —> ID | ID [ expressão ]
 (20) simples-expressão —> soma-expressão relacional soma-expressão | soma-expressão
-(21) relacional -> <= | < | > | >= | » | !=
+(21) relacional -> <= | < | > | >= | == | !=
 (22) soma-expressão —> soma-expressão soma termo | termo
 (23) soma —> + | -
-(24) termo —> termo multfator | fator
+(24) termo —> termo mult fator | fator
 (25) mult -> * | /
 (26) fator -> ( expressão ) | var | ativação | NUM
 (27) ativação —> ID ( args )
