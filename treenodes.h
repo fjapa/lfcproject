@@ -12,6 +12,7 @@ typedef struct VARDEC *tVarDec; /*var-declaração*/
 typedef struct TIPOESP *tTipoEsp; /*tipo-especificador*/
 typedef struct FUNDEC *tFunDec; /*fun-declaração*/
 typedef struct PARAMS * tParams; /*params*/
+typedef struct PARAM * tParam; /*param*/
 typedef struct PARAMLIST *tParamList; /*param-lista*/
 typedef struct VAR *tVar; /*var*/
 typedef struct ARGLIST * tArgList; /*arg-lista*/
@@ -24,7 +25,7 @@ typedef struct MULT * tMult; /*mult*/
 typedef struct TERMO * tTermo; /*termo*/
 typedef struct SOMA * tSoma; /*soma*/
 typedef struct SOMAEXP *tSomaExp; /*soma-expressão*/
-typedef struct RELACIONAL *tRelacional; /*relacional*/ 
+typedef struct RELACIONAL *tRelacional; /*relacional*/
 typedef struct SIMEXP *tSimExp; /*simples-expressão*/
 typedef struct RETDEC *tRetDec; /*retorno-decl*/
 typedef struct ITDEC *tIterDec; /*iteração-decl*/
@@ -34,6 +35,7 @@ typedef struct COMPDEC *tCompDec;/*composto-decl*/
 typedef struct SELDEC *tSelDec; /*seleção-decl*/
 typedef struct LOCALDEC *tLocalDec; /*local-decl*/
 typedef struct STATLIST *tStatList;/*statement-lista*/
+
 typedef char *string;
 
 /*(01) programa —> declaração-lista*/
@@ -90,9 +92,9 @@ struct TIPOESP{
     enum{producao_int,producao_void}tipoDeProducao;
     union{
         struct{
-		} Tint;
-		struct{
-		} Tvoid;
+} Tint;
+struct{
+} Tvoid;
     } uniao;
 };
 tTipoEsp producao_int();
@@ -112,7 +114,7 @@ struct PARAMS {
     enum{producao_void, producao_paramlist} tipoDeProducao;
     union{
         struct{
-		} Tvoid;
+} Tvoid;
         tParamList paramList;
     } uniao;
 };
@@ -148,7 +150,7 @@ struct PARAM{
     }uniao;
 };
 tParam producao_tipoEsp_ID(tTipoEsp tipoEsp, string id);
-tParam producao_tipoEsp_ID_aC_fC(tTipoEsp tipoEsp,string id); 
+tParam producao_tipoEsp_ID_aC_fC(tTipoEsp tipoEsp,string id);
 
 /*(10) composto-decl —> { local-declarações statement-lista }*/
 struct COMPDEC{
@@ -163,9 +165,9 @@ struct LOCALDEC{
    union{
        struct{
            tLocalDec localDec;
-		   tVarDec varDec;
+tVarDec varDec;
         } Tvariasdeclaracoes;
-		tVazio vazio;
+tVazio vazio;
     } uniao;
 };
 tLocalDec producao_localDeclaracoes_localDeclaracoes_varDeclaracao(tLocalDec localDec, tVarDec varDec);
@@ -178,9 +180,9 @@ struct STATLIST{
    union{
        struct{
            tStatList statList;
-		   tStat statement;
+tStat statement;
         } Tvariasdeclaracoes;
-		tVazio vazio;
+tVazio vazio;
     } uniao;
 };
 tStatList producao_statementLista_statement(tStatList statList, tStat statement);
@@ -210,35 +212,35 @@ struct EXPDEC {
         struct{
             tExp Exp;
         } Tvariasdeclaracoes;
-		struct{
+struct{
         } Tvariasdeclaracoes2;
-	} uniao;
+} uniao;
 };
 tExpDec producao_expdec_expressaoDecl(tExpDec expDec); /* expressão-decl -> expressão ; */
 tExpDec producao_expdec_pontoVirgula(); /* expressão-decl -> ; */
 
 /*(15) seleção-decl —> if ( expressão ) statement | if ( expressão ) statement else statement*/
 struct SELDEC{
-	enum{producao_if_aP_expressao_fP_statement, producao_if_aP_expressao_fP_statement_else_statement} tipoDeProducao;
-	union{
-		struct{
-			tExp exp;
-			tStat statement;
-		}Tvariasdeclaracoes1;
-		struct{
-			tExp exp;
-			tStat statementIf;
-			tStat statementElse;
-		}Tvariasdeclaracoes2;
-	} uniao;
+enum{producao_if_aP_expressao_fP_statement, producao_if_aP_expressao_fP_statement_else_statement} tipoDeProducao;
+union{
+struct{
+tExp exp;
+tStat statement;
+}Tvariasdeclaracoes1;
+struct{
+tExp exp;
+tStat statementIf;
+tStat statementElse;
+}Tvariasdeclaracoes2;
+} uniao;
 };
-tSeleDec producao_seleDec_if_aP_expressao_fP_statement(tExp Exp, tStat stat); /* seleção-decl —> if ( expressão ) statement */
-tSeleDec producao_seleDec_if_aP_expressao_fP_statement_else_statement(tExp Exp, tStat statIf, tStat statElse); /* seleção-decl —> if ( expressão ) statement else statement */
+tSelDec producao_seleDec_if_aP_expressao_fP_statement(tExp Exp, tStat stat); /* seleção-decl —> if ( expressão ) statement */
+tSelDec producao_seleDec_if_aP_expressao_fP_statement_else_statement(tExp Exp, tStat statIf, tStat statElse); /* seleção-decl —> if ( expressão ) statement else statement */
 
 /*(16) iteração-decl —> while ( expressão ) statement */
 struct ITDEC{
     tExp Exp;
-    tStatement statement;
+    tStat statement;
 };
 tIterDec producao_itDec_while_aP_expressao_fP_statement(tExp Exp, tStat stat); /* iteração-decl —> while ( expressão ) statement */
 
@@ -246,11 +248,11 @@ tIterDec producao_itDec_while_aP_expressao_fP_statement(tExp Exp, tStat stat); /
 struct RETDEC {
     enum{producao_pontoVirgula, producao_expressao} tipoDeProducao;
     union{
-		struct{
-		} Tvoid;
+struct{
+} Tvoid;
         struct{
         tExp exp;
-		} Tvariasdeclaracoes;
+} Tvariasdeclaracoes;
     } uniao;
 };
 tRetDec producao_retornoDecl_return_pontoVirgula(); /* retorno-decl -> return ; */
@@ -275,7 +277,7 @@ struct VAR {
     enum{producao_id, producao_ID_aC_exp_fC} tipoDeProducao;
     union{
         string id;
-		struct{
+struct{
             string id;
             tExp expressao;
         } Tvariasdeclaracoes;
@@ -291,7 +293,7 @@ struct SIMEXP{
         struct{
             tSomaExp somaExp1;
             tRelacional relacional;
-			tSomaExp somaExp2;
+tSomaExp somaExp2;
         } Tvariasdeclaracoes;
         tSomaExp somaExp;
     } uniao;
@@ -303,18 +305,18 @@ tSimExp producao_simplesexpressao_somaexpressao(tSomaExp somaExp); /* simples-ex
 struct RELACIONAL {
     enum{producao_menorigual, producao_menor, producao_maior, producao_maiorigual, producao_igual, producao_diferente} tipoDeProducao;
     union{
-		struct{
-		} menorigual;
-		struct{
-		} menor;
-		struct{
-		} maior;
-		struct{
-		} maiorigual;
-		struct{
-		} igual;
-		struct{
-		} diferente;
+struct{
+} menorigual;
+struct{
+} menor;
+struct{
+} maior;
+struct{
+} maiorigual;
+struct{
+} igual;
+struct{
+} diferente;
     } uniao;
 };
 tRelacional producao_relacional_menorigual(); /* relacional -> <= */
@@ -331,7 +333,7 @@ struct SOMAEXP{
         struct{
             tSomaExp somaExp;
             tSoma soma;
-			tTermo termo;
+tTermo termo;
         } Tvariasdeclaracoes;
         tTermo termo;
     } uniao;
@@ -343,10 +345,10 @@ tSomaExp producao_somaexpressao_termo(tTermo termo); /* soma-expressão —> ter
 struct SOMA {
     enum{producao_mais, producao_menos} tipoDeProducao;
     union{
-		struct{
-		} mais;
-		struct{
-		} menos;
+struct{
+} mais;
+struct{
+} menos;
     } uniao;
 };
 tSoma producao_soma_mais(); /* soma -> + */
@@ -359,7 +361,7 @@ struct TERMO{
         struct{
             tTermo termo;
             tMult mult;
-			tFator fator;
+tFator fator;
         } Tvariasdeclaracoes;
         tFator fator;
     } uniao;
@@ -371,10 +373,10 @@ tTermo producao_termo_fator(tFator fator); /* termo -> fator */
 struct MULT {
     enum{producao_asterisco, producao_aBarra} tipoDeProducao;
     union{
-		struct{
-		} asterisco;
-		struct{
-		} aBarra;
+struct{
+} asterisco;
+struct{
+} aBarra;
     } uniao;
 };
 tMult producao_mult_aBarra(); /* mult -> / */
@@ -386,8 +388,8 @@ struct FATOR {
     union{
         tExp expressao;
         tVar var;
-		tAtiv ativacao;
-		int NUM;
+tAtiv ativacao;
+int NUM;
     } uniao;
 };
 tFator producao_fator_aP_expressao_fP(tExp expressao); /* fator -> ( expressão ) */
@@ -397,8 +399,8 @@ tFator producao_fator_num(int num); /* fator -> NUM */
 
 /*(27) ativação —> ID ( args ) */
 struct ATIV {
-	string id;
-	tArgs args;
+string id;
+tArgs args;
 };
 tAtiv producao_ativacao_ID_aP_args_fP(string id, tArgs args); /* ativação —> ID ( args ) */
 
@@ -434,7 +436,7 @@ tVazio producao_vazio();
 
 #endif
 
-/* 
+/*
 GRAMÁTICA EM BNF PARA C-
 
 (01) programa —> declaração-lista
