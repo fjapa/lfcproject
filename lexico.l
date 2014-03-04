@@ -32,9 +32,3 @@ INVALIDO (.)
 {STR} printf( "String: %s\n", yytext );
 {INVALIDO}
 %%
-
-int main(void)
-{
-yylex();
-return 0;
-}
