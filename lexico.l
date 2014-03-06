@@ -3,62 +3,85 @@
 #include <stdlib.h>
 #include <string.h>
 #include "treenodes.h"
-#include "sintatico_bison.h"
-int level;
+#include "sintatico.h"
+int level, erro=0;
 %}
 
 %option noyywrap
-OPERADORES "+"|"-"|"*"|"/"|"<"|"<="|">"|">="|"=="|"!="|"="|";"|","|"("|")"|"["|"]"|"{"|"}"
+
 ID [a-zA-Z]+
-IDINVALIDO [0-9]+[a-zA-Z]+[0-9]*|[0-9]*[a-zA-Z]+[0-9]+
 NUM [0-9][0-9]*
+OPERADORES "+"|"-"|"*"|"/"|"<"|"<="|">"|">="|"=="|"!="|"="|";"|","|"("|")"|"["|"]"|"{"|"}"
 STR ["][^"]*[^\n]["]
-INVALIDO (.)
 
 %x COMENT
-
 %%
-\r|\n|\t
-"/*" BEGIN( COMENT ); level = 1; printf( "Início do comentário:\n");
+"/*"			{
+			BEGIN( COMENT );
+			level = 1;
+			}
 
-<COMENT>{
-"/*" {level++; printf( "/*");}
-"*/" {if(--level == 0){ BEGIN( INITIAL ); printf( "\nFim do comentário!\n");} else{ printf( "*/"); }}
-\n {ECHO;}
-}
+
+<COMENT>"/*"		{
+			level++;
+			}
+
+
+<COMENT>"*/" 		{
+			if(--level == 0){
+				BEGIN( INITIAL );}
+			else{
+				erro++;}
+			}
+
+<COMENT>.|\n|\r 	{
+			}
+
+<<EOF>>		  	{ 
+			if(erro>0){
+				printf("ERRO LÉXICO! Comentário desbalanceado.\n");}
+		    	yyterminate();
+		 	}
 
 "string"	{ return STRING; }
 "else"		{ return ELSE; }
-"if"		  { return IF; }
-"int"		  { return INT; }
+"if"		{ return IF; }
+"int"		{ return INT; }
 "return"	{ return RETURN; }
 "void"		{ return VOID; }
 "while"		{ return WHILE; }
-"+"		    { return MAIS; }
-"-"		    { return MENOS; }
-"*"		    { return ASTERISCO; }
-"/"		    { return BARRA; }
-"<"		    { return MENOR; }
-"<="		  { return MENORIGUAL; }
-">"		    { return MAIOR; }
-">="		  { return MAIORIGUAL; }
-"=="		  { return IGUALIGUAL; }
-"!="		  { return DIFERENTE; }
-"="		    { return IGUAL; }
-";"		    { return PONTOVIRGULA; }
-","		    { return VIRGULA; }
-"("		    { return ABREPARENTESES; }
-")"		    { return FECHAPARENTESES; }
-"["		    { return ABRECOLCHETE; }
-"]"		    { return FECHACOLCHETE; }
-"{"		    { return ABRECHAVE; }
-"}"		    { return FECHACHAVE; }
-{ID}		  { yylval.str = strdup(yytext); return ID; }
-{NUM}		  { yylval.digito = atoi(yytext); return DIGITO; }
-{STR}     { yylval.str = strdup(yytext); return CADEIASTRING; }
+"+"		{ return MAIS; }
+"-"		{ return MENOS; }
+"*"		{ return ASTERISCO; }
+"/"		{ return BARRA; }
+"<"		{ return MENOR; }
+"<="		{ return MENORIGUAL; }
+">"		{ return MAIOR; }
+">="		{ return MAIORIGUAL; }
+"=="		{ return IGUALIGUAL; }
+"!="		{ return DIFERENTE; }
+"="		{ return IGUAL; }
+";"		{ return PONTOVIRGULA; }
+","		{ return VIRGULA; }
+"("		{ return ABREPARENTESES; }
+")"		{ return FECHAPARENTESES; }
+"["		{ return ABRECOLCHETE; }
+"]"		{ return FECHACOLCHETE; }
+"{"		{ return ABRECHAVE; }
+"}"		{ return FECHACHAVE; }
+{ID}		{ yylval.str = strdup(yytext); return ID; }
+{NUM}*		{ yylval.digito = atoi(yytext); return DIGITO; }
+{STR} 		{ yylval.str = strdup(yytext); return CADEIASTRING; }
+{ID}{NUM}({ID}|{NUM})*	{ printf("ERRO LÉXICO! ID Inválido.\n");}
+{NUM}{ID}({ID}|{NUM})*	{ printf("ERRO LÉXICO! ID Inválido.\n");}
 
-{IDINVALIDO}+ printf("ERRO! ID inválido: %s\n", yytext);
-{INVALIDO}
+.|\n|\r
 
 %%
-
+/*
+int main(void)
+{
+yylex();
+return 0;
+}
+*/
