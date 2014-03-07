@@ -1,6 +1,45 @@
-lfcproject
+Trabalho realizado para a disciplina Linguagens Formais e Compiladores no curso de Engenharia de Computação da Universidade Federal de Sergipe
 
-	Trabalho realizado para a disciplina Linguagens Formais e Compiladores no curso de Engenharia de Computação da Universidade Federal de Sergipe. O projeto teve o objetivo de criar um compilador para a linguagem C-, descrita no livro "COMPILADORES: Princípios e práticas; Louden, Kenneth C." e com algumas alterações impostas pelo professor.
+Felipe de Almeida Florencio 201110006160 (ffjapa)
+Hugo Menezes Tavares 201110008710 (201110008710)
+
+Construção de um compilador para a linguagem C-
+
+Analisador léxico
+Analisador sintático
+Analisador semântico
+
+A GRAMÁTICA:
+
+(01) programa —> declaração-lista
+(02) declaração-lista —> declaração-lista declaração | declaração
+(03) declaração —> var-declaração | fun-declaração
+(04) var-declaração —» tipo-especificador ID ; | tipo-especificador ID [ NUM ] ;
+(05) tipo-especificador -> int | void
+(06) fun-declaração —> tipo-especificador ID ( params ) composto-decl
+(07) params —> param-lista | void
+(08) param-lista —> param-lista, param | param
+(09) param —> tipo-especificador ID | tipo-especificador ID []
+(10) composto-decl —> { local-declarações statement-lista
+(11) local-declarações -> local-declarações var-declaração | vazio
+(12) statement-lista —> statement-lista statement | vazio
+(13) statement —> expressão-decl | composto-decl | seleção-decl | iteração-decl | retorno-decl
+(14) expressão-decl -> expressão ; | ;
+(15) seleção-decl —> if ( expressão ) statement | if ( expressão ) statement else statement
+(16) iteração-decl —> while ( expressão ) statement
+(17) retorno-decl —> return ; | return expressão ;
+(18) expressão -> var = expressão | simples-expressão
+(19) var —> ID | ID [ expressão ]
+(20) simples-expressão —> soma-expressão relacional soma-expressão | soma-expressão
+(21) relacional -> <= | < | > | >= | » | !=
+(22) soma-expressão —> soma-expressão soma termo | termo
+(23) soma —> + | -
+(24) termo —> termo multfator | fator
+(25) mult -> * | /
+(26) fator -> ( expressão ) | var | ativação | NUM
+(27) ativação —> ID ( args )
+(28) args —> arg-lista | vazio
+(29) arg-lista -> arg-lista, expressão | expressão
 
 OS ALUNOS:
 
@@ -11,7 +50,6 @@ Hugo Menezes Tavares | Matrícula: 201110008710 | User: 201110008710
 AS ETAPAS:
 
 (1) - Análise Léxica
-Data de Entrega: 17/01/2014 as 23h59
 Data em que foi entregue: 18/01/2014 (Entregue entre as 23:00 e 00:00 do dia 17/01/2014. O github marcou como dia 18/01/2014).
 
 Arquivos entregues:
@@ -23,7 +61,6 @@ Commit de entrega: "Correções", neste arquivo readme.
 
 
 (2) - Análise Sintática
-Data de entrega: 17/02/2014 até as 23h59
 Data em que foi entregue: 04/03/2014. (quinze dias de atraso)
 
 Arquivos entregues:
@@ -39,7 +76,6 @@ Commit de entrega: "Classe concluída", no arquivo sintatico.y
 
 
 (3) - Analise Semântica
-Data de entrega: 06/03/2014 até as 23h59
 Data em que foi entregue: ----
 
 Arquivos anexados:
@@ -53,61 +89,19 @@ Foi dado apenas o pontapé inicial, com alterações no analisador léxico e sem
 
 OS COMANDOS:
 
-	Os comandos para gerar o compilador são:
-
 		bison -v -d -o sintatico.c sintatico.y
 
 		flex -v -t lexico.l > lexico.c
 
 		gcc sintatico.c lexico.c -o compilador
 
-	Tal sequência de comandos pode ser executada de forma mais rápida, usando o script 'executar.sh'. Para isso, basta executar :
+	OU
 
 		./executar.sh
 
-	Para testar algum arquivo, basta executar:
-
-		./compilador <[arquivo].c
 
 *Comandos válidos para linux.
 
-CONSIDERAÇÕES FINAIS:
-
-	SOBRE A EXECUÇÃO:
-		- Na primeira versão do analisador léxico, os tokens reconhecidos e os erros léxicos eram mostrados na tela. 
-		- No analisador sintático, é exibido na tela somente se houve erro ou não.
-	SOBRE O TRABALHO:
+CONSIDERAÇÕES FINAIS SOBRE O TRABALHO:
 		- Os commits do aluno Felipe Florêncio foram escassos a partir da segunda etapa pelo motivo do mesmo ter desistido do projeto e da disciplina.
 
-ANEXO:
-	GRAMÁTICA DA LINGUAGEM C-:
-
-		(01) programa —> declaração-lista
-		(02) declaração-lista —> declaração-lista declaração | declaração
-		(03) declaração —> var-declaração | fun-declaração
-		(04) var-declaração —» tipo-especificador ID ; | tipo-especificador ID [ NUM ] ;
-		(05) tipo-especificador -> int | void | string
-		(06) fun-declaração —> tipo-especificador ID ( params ) composto-decl
-		(07) params —> param-lista | void
-		(08) param-lista —> param-lista, param | param
-		(09) param —> tipo-especificador ID | tipo-especificador ID []
-		(10) composto-decl —> { local-declarações statement-lista
-		(11) local-declarações -> local-declarações var-declaração | vazio
-		(12) statement-lista —> statement-lista statement | vazio
-		(13) statement —> expressão-decl | composto-decl | seleção-decl | iteração-decl | retorno-decl
-		(14) expressão-decl -> expressão ; | ;
-		(15) seleção-decl —> if ( expressão ) statement | if ( expressão ) statement else statement
-		(16) iteração-decl —> while ( expressão ) statement
-		(17) retorno-decl —> return ; | return expressão ;
-		(18) expressão -> var = expressão | simples-expressão
-		(19) var —> ID | ID [ expressão ]
-		(20) simples-expressão —> soma-expressão relacional soma-expressão | soma-expressão
-		(21) relacional -> <= | < | > | >= | == | !=
-		(22) soma-expressão —> soma-expressão soma termo | termo
-		(23) soma —> + | -
-		(24) termo —> termo mult fator | fator
-		(25) mult -> * | /
-		(26) fator -> ( expressão ) | var | ativação | NUM | cadeia-string
-		(27) ativação —> ID ( args )
-		(28) args —> arg-lista | vazio
-		(29) arg-lista -> arg-lista, expressão | expressão
