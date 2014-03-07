@@ -10,7 +10,6 @@ Analisador sintático
 Analisador semântico
 
 A GRAMÁTICA:
-
 (01) programa —> declaração-lista
 (02) declaração-lista —> declaração-lista declaração | declaração
 (03) declaração —> var-declaração | fun-declaração
@@ -41,27 +40,20 @@ A GRAMÁTICA:
 (28) args —> arg-lista | vazio
 (29) arg-lista -> arg-lista, expressão | expressão
 
-OS ALUNOS:
+A ENTREGA:
 
-Felipe de Almeida Florencio | Matrícula: 201110006160 | User:ffjapa
-Hugo Menezes Tavares | Matrícula: 201110008710 | User: 201110008710
-
-
-AS ETAPAS:
-
-(1) - Análise Léxica
-Data em que foi entregue: 18/01/2014 (Entregue entre as 23:00 e 00:00 do dia 17/01/2014. O github marcou como dia 18/01/2014).
+Análise Léxica
+Entregue em 18/01/2014. (Entre as 23:00 e 00:00 do dia 17/01/2014. O github marcou como dia 18/01/2014).
 
 Arquivos entregues:
 readme* - Concluído em 17/01/2014.
 
 *Como não sabíamos usar o GitHub ainda, o código foi copiado e colado no arquivo readme.
 
-Commit de entrega: "Correções", neste arquivo readme.
+Commit "Correções", em https://github.com/fjapa/lfcproject/blob/master/README
 
-
-(2) - Análise Sintática
-Data em que foi entregue: 04/03/2014. (quinze dias de atraso)
+Análise Sintática
+Entregue em 04/03/2014. Entrega atrasada!
 
 Arquivos entregues:
 lexico.l* - Concluído em 18/01/2014. Movido do readme para o arquivo lexico.l no dia 19/02/2014.
@@ -72,11 +64,10 @@ sintatico.y - Concluído em 04/03/2014.
 *Depois de aprendermos a usar o GitHub, criamos o arquivo corretamente.
 **Esse arquivo foi renomeado para treenodes.c e acabou perdendo o histórico. Não sabia que perdia. Foi entregue em 04/03/2014, junto com o arquivo sintatico.y.
 
-Commit de entrega: "Classe concluída", no arquivo sintatico.y
+Commit "Classe concluída", em https://github.com/fjapa/lfcproject/blob/master/sintatico.y
 
-
-(3) - Analise Semântica
-Data em que foi entregue: ----
+Analise Semântica
+Foi dado apenas o pontapé inicial, com alterações no analisador léxico e semântico. Só foram feitas as estruturas de símbolos e de bindings.
 
 Arquivos anexados:
 symbols.h - Anexado em 06/03/2014.
@@ -85,9 +76,8 @@ semantico.h - Anexado em 06/03/2014.
 semantico.c - Anexado em 06/03/2014.
 util.h - Anexado em 06/03/2014.
 
-Foi dado apenas o pontapé inicial, com alterações no analisador léxico e semântico. Só foram feitas as estruturas de símbolos e de bindings.
-
 OS COMANDOS:
+Para linux:
 
 		bison -v -d -o sintatico.c sintatico.y
 
@@ -99,8 +89,18 @@ OS COMANDOS:
 
 		./executar.sh
 
+Para windows:
 
-*Comandos válidos para linux.
+		bison -v -d -o sintatico.c sintatico.y
+
+		flex -v -t lexico.l > lexico.c
+
+		gcc sintatico.c lexico.c -o compilador
+
+	OU
+
+		./executar.bat
+
 
 CONSIDERAÇÕES FINAIS SOBRE O TRABALHO:
 		- Os commits do aluno Felipe Florêncio foram escassos a partir da segunda etapa pelo motivo do mesmo ter desistido do projeto e da disciplina.
